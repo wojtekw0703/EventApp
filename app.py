@@ -1,14 +1,15 @@
 from flask import Flask, render_template, request, redirect, url_for, session
-import MySQL
+import mysql.connector
 import bcrypt
 
 app = Flask(__name__)
-app.config['MYSQL_HOST'] = ''
-app.config['MYSQL_USER'] = ''
-app.config['MYSQL_PASSWORD'] = ''
-app.config['MYSQL_DB'] = ''
-app.config['MYSQL_CURSORCLASS'] = ''
-mysql = MySQL(app)
+
+db_connection = mysql.connector.connect(
+host="localhost",
+user="root",
+passwd="nowe_haslo",
+database="event_app_database"
+)
 
 class User:
     def __init__(self, name, email, hash_password):
@@ -34,8 +35,8 @@ def register():
         hash_password = bcrypt.hashpw(password, bcrypt.gensalt())
         User(name, email, hash_password)
 
-        cur = mysql.connection.cursor()
-        cur.execute("INSERT INTO Users (name, email, password) VALUES (%s,%s,%s)",(User.name,User.email,User.hash_password))
+        
+        db_connection.execute("INSERT INTO Users (name, email, password) VALUES (%s,%s,%s)",(User.name,User.email,User.hash_password))
         mysql.connection.commit()
         session['name'] = request.form['name']
         session['email'] = request.form['email']

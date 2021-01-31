@@ -19,10 +19,20 @@ class User:
 
 app = Flask(__name__)
 
-
-@app.route('/')
-def home():
-    return render_template("home.html")
+@app.route('/login')
+@app.route('/', methods=['POST','GET'])
+def login():
+    if request.method == 'POST':
+        email = request.form['email']
+        password = bcrypt.hashpw(request.form['pass'].encode('utf-8'), bcrypt.gensalt())
+        db_connection.execute('SELECT email FROM users WHERE email=?', (email,))
+        db_connection.execute('SELECT password FROM users WHERE password=?', (password,))
+        check_email = db_connection.fetchone()
+        check_password = db_connection.fetchone()
+        if check_email !=0 and check_password !=0:
+            return render_template("register.html")
+    else:
+        return render_template("login.html")
 
 @app.route('/register', methods=["GET", "POST"])
 def register():

@@ -24,9 +24,9 @@ app = Flask(__name__)
 def login():
     if request.method == 'POST':
         email = request.form['email']
-        password = bcrypt.hashpw(request.form['pass'].encode('utf-8'), bcrypt.gensalt())
-        db_connection.execute('SELECT email FROM users WHERE email=?', (email,))
-        db_connection.execute('SELECT password FROM users WHERE password=?', (password,))
+        password = request.form['pass']
+        db_connection.execute('SELECT email FROM users WHERE email=?', (email))
+        db_connection.execute('SELECT password FROM users WHERE password=?', (password))
         check_email = db_connection.fetchone()
         check_password = db_connection.fetchone()
         if check_email !=0 and check_password !=0:

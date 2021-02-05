@@ -55,8 +55,10 @@
 						<button class="login100-form-btn" name="action" value="Log in">
 							Log in
 						</button>
-				
 					</div>
+					{% if error %}
+      					  <p class="error"><strong>Error:</strong> {{ error }}
+    				  {% endif %}
 		
 					<div class="text-center p-t-136">
 						<a class="txt2" href="{{ url_for('register') }}">

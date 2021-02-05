@@ -24,37 +24,34 @@ app = Flask(__name__)
 def home():
     return render_template("login.html")
 
+@app.route('/userpage')
+def userpage():
+    return render_template("home.html")
+
 @app.route('/login', methods=['POST','GET'])
 def login():
     if request.method == 'POST':
         email = request.form['email']
         password = request.form['pass']
+        
         cur.execute("SELECT email FROM users WHERE email=%s", (email,))
-        data = cur.fetchone()
+        result_email = cur.fetchone()
         
-       
-        
-        # cursor_email = connection.cursor()
-        # cursor_password = connection.cursor()
+        cur.execute("SELECT password FROM users WHERE password=%s", (password,))
+        result_password = cur.fetchone()
 
-        # cursor_email.execute(sql_query_email)
-        # cursor_password.execute(sql_query_password)
-
-        # records_email = cursor_email.fetchone()
-        # records_password = cursor_password.fetchone()
-
-        if data != None:
-            return render_template("home.html")
-        if data == None:
-            return render_template("register.html")
+        if result_email and result_password != None:
+            return redirect(url_for('userpage'))
+        if result_email and result_password == None:
+            error = 'Invalid email or password. Please try again.'
+            return render_template("login.html",error=error)
     else:
         return render_template("login.html")
     
 
 @app.route('/register', methods=["GET","POST"])
 def register():
-    if request.method == 'GET':
-        return render_template("register.html")
+    return render_template("register.html")
     # else:
     #     name = request.form['name']
     #     email = request.form['email']
@@ -67,8 +64,7 @@ def register():
     #     # mysql.connection.commit()
     #     session['name'] = request.form['name']
     #     session['email'] = request.form['email']
-    else:
-        return redirect("login.html")
+   
 
 if __name__ == '__main__':
     app.secret_key = "^A%DEventApp"

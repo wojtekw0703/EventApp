@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, session
+from flask import Flask, flash, render_template, request, redirect, url_for, session
 import mysql.connector
 import bcrypt
 
@@ -21,7 +21,7 @@ class User:
 app = Flask(__name__)
 
 @app.route('/')
-def home():
+def start():
     return render_template("login.html")
 
 @app.route('/userpage')
@@ -42,11 +42,9 @@ def login():
 
         if result_email and result_password != None:
             return redirect(url_for('userpage'))
-        if result_email and result_password == None:
-            error = 'Invalid email or password. Please try again.'
-            return render_template("login.html",error=error)
-    else:
-        return render_template("login.html")
+        
+        flash("Wrong email or password")
+    return render_template('login.html')
     
 
 @app.route('/register', methods=["GET","POST"])

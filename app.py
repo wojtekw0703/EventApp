@@ -13,10 +13,10 @@ database="event_app_database"
 
 cur = connection.cursor()
 class User:
-    def __init__(self, name, email, hash_password):
+    def __init__(self, name, email, password):
         self.name = name
         self.email = email
-        self.hash_password = hash_password
+        self.password = password
 
 app = Flask(__name__)
 
@@ -30,7 +30,7 @@ def userpage():
 
 @app.route('/login', methods=['POST','GET'])
 def login():
-    if request.method == 'POST':
+    if request.method == 'POST' and request.form['action'] == "Log in":
         email = request.form['email']
         password = request.form['pass']
         
@@ -46,23 +46,24 @@ def login():
         flash("Wrong email or password")
     return render_template('login.html')
     
+    
 
-@app.route('/register', methods=["GET","POST"])
+@app.route('/register', methods=['POST','GET'])
 def register():
+    if request.method == 'POST' and request.form['action'] == "Sign up":
+        name = request.form['name']
+        email = request.form['email']
+        password = request.form['password']
+        new_user = User(name,email,password)
+        if name == "" or email == "" or password == "":
+             flash(u"Complete all fields","danger")
+        else:
+            sql = "INSERT INTO users (name, email, password) VALUES (%s,%s,%s)"
+            args = (new_user.name,new_user.email,new_user.password)
+            cur.execute(sql,args)
+            connection.commit()
+            flash(u"Successful","success")
     return render_template("register.html")
-    # else:
-    #     name = request.form['name']
-    #     email = request.form['email']
-    #     password = request.form['password'].encode('utf-8')
-    #     hash_password = bcrypt.hashpw(password, bcrypt.gensalt())
-    #     User(name, email, hash_password)
-
-        
-    #     # db_connection.execute("INSERT INTO Users (name, email, password) VALUES (%s,%s,%s)",(User.name,User.email,User.hash_password))
-    #     # mysql.connection.commit()
-    #     session['name'] = request.form['name']
-    #     session['email'] = request.form['email']
-   
 
 if __name__ == '__main__':
     app.secret_key = "^A%DEventApp"

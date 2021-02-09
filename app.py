@@ -11,7 +11,7 @@ passwd="nowe_haslo",
 database="event_app_database"
 )
 
-cur = connection.cursor()
+cur = connection.cursor(buffered=True)
 class User:
     def __init__(self, name, email, password):
         self.name = name
@@ -22,7 +22,7 @@ app = Flask(__name__)
 
 @app.route('/')
 def start():
-    return render_template("login.html")
+    return render_template("index.html")
 
 @app.route('/userpage')
 def userpage():
@@ -30,7 +30,7 @@ def userpage():
 
 @app.route('/login', methods=['POST','GET'])
 def login():
-    if request.method == 'POST' and request.form['action'] == "Log in":
+    if request.method == 'POST' and request.form['action'] == "Login":
         email = request.form['email']
         password = request.form['pass']
         
@@ -43,8 +43,8 @@ def login():
         if result_email and result_password != None:
             return redirect(url_for('userpage'))
         
-        flash("Wrong email or password")
-    return render_template('login.html')
+        flash("Wrong email or password","error")
+    return render_template('index.html')
     
     
 
@@ -56,14 +56,15 @@ def register():
         password = request.form['password']
         new_user = User(name,email,password)
         if name == "" or email == "" or password == "":
-             flash(u"Complete all fields","danger")
+             flash(u"Complete all fields","error")
         else:
             sql = "INSERT INTO users (name, email, password) VALUES (%s,%s,%s)"
             args = (new_user.name,new_user.email,new_user.password)
             cur.execute(sql,args)
             connection.commit()
-            flash(u"Successful","success")
-    return render_template("register.html")
+            flash(u"Your account has been created")
+    return '',204
+    
 
 if __name__ == '__main__':
     app.secret_key = "^A%DEventApp"

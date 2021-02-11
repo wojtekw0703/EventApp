@@ -43,7 +43,7 @@ def login():
         if result_email and result_password != None:
             return redirect(url_for('userpage'))
         
-        flash("Wrong email or password","error")
+        flash("Wrong email or password","danger")
     return render_template('index.html')
     
     
@@ -56,14 +56,14 @@ def register():
         password = request.form['password']
         new_user = User(name,email,password)
         if name == "" or email == "" or password == "":
-             flash(u"Complete all fields","error")
+             flash(u"Complete all fields","danger")
         else:
             sql = "INSERT INTO users (name, email, password) VALUES (%s,%s,%s)"
             args = (new_user.name,new_user.email,new_user.password)
             cur.execute(sql,args)
             connection.commit()
-            flash(u"Your account has been created")
-    return '',204
+            flash(u"Your account has been created. Sign in now","success")
+    return render_template('index.html')
     
 
 if __name__ == '__main__':

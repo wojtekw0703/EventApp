@@ -56,13 +56,26 @@ def register():
         password = request.form['password']
         new_user = User(name,email,password)
         if name == "" or email == "" or password == "":
-             flash(u"Complete all fields","danger")
+            flash(u"Complete all fields","danger")
         else:
-            sql = "INSERT INTO users (name, email, password) VALUES (%s,%s,%s)"
-            args = (new_user.name,new_user.email,new_user.password)
-            cur.execute(sql,args)
-            connection.commit()
-            flash(u"Your account has been created. Sign in now","success")
+            email = request.form['email']
+            password = request.form['password']
+        
+            cur.execute("SELECT email FROM users WHERE email=%s", (email,))
+            result_email = cur.fetchone()
+        
+            cur.execute("SELECT password FROM users WHERE password=%s", (password,))
+            result_password = cur.fetchone()
+
+            if result_email and result_password != None:
+                flash(u"An account already exists","danger")
+                return render_template('index.html')
+            else:
+                sql = "INSERT INTO users (name, email, password) VALUES (%s,%s,%s)"
+                args = (new_user.name,new_user.email,new_user.password)
+                cur.execute(sql,args)
+                connection.commit()
+                flash(u"Your account has been created. Sign in now","success")
     return render_template('index.html')
     
 

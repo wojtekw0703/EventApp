@@ -23,7 +23,7 @@
       <!-- partial:partials/_navbar.html -->
       <nav class="navbar default-layout-navbar col-lg-12 col-12 p-0 fixed-top d-flex flex-row">
         <div class="text-center navbar-brand-wrapper d-flex align-items-center justify-content-center">
-          <!-- <a class="navbar-brand brand-logo" href="index.html"><img src="assets/images/logo.svg" alt="logo" /></a> -->
+          <a class="navbar-brand brand-logo" href="{{ url_for('userpage') }}"><img src="static/assets/images/logo.svg" alt="logo" /></a>
           <a class="navbar-brand brand-logo-mini" href="{{ url_for('userpage') }}"><img src="static/assets/images/logo-mini.svg" alt="logo" /></a>
         </div>
         <div class="navbar-menu-wrapper d-flex align-items-stretch">
@@ -36,30 +36,25 @@
                 <div class="input-group-prepend bg-transparent">
                   <i class="input-group-text border-0 mdi mdi-magnify"></i>
                 </div>
-                <input type="text" class="form-control bg-transparent border-0" placeholder="Search projects">
+                <input type="text" class="form-control bg-transparent border-0" placeholder="Search">
               </div>
             </form>
           </div>
         
           <ul class="navbar-nav navbar-nav-right">
-            <h3 class="page-title">
-              <span class="page-title-icon bg-gradient-primary text-white mr-2">
-                <i class="mdi mdi-home"></i>
-              </span> Dashboard
-            </h3>
             <li class="nav-item nav-profile dropdown">
               <a class="nav-link dropdown-toggle" id="profileDropdown" href="#" data-toggle="dropdown" aria-expanded="false">
                 <div class="nav-profile-img">
                   <img src="static/assets/images/faces/user.png" alt="image">
                   <span class="availability-status online"></span>
                 </div>
-                
                 <div class="nav-profile-text">
-                  <p class="mb-1 text-black"></p>
+                  <p class="mb-1 text-black">Wojtek</p>
                 </div>
               </a>
               <div class="dropdown-menu navbar-dropdown" aria-labelledby="profileDropdown">
-                <a class="dropdown-item" href="#">
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item" href="{{ url_for('login') }}">
                   <i class="mdi mdi-logout mr-2 text-primary"></i> Sign out </a>
               </div>
             </li>
@@ -68,12 +63,11 @@
                 <i class="mdi mdi-fullscreen" id="fullscreen-button"></i>
               </a>
             </li>
-            
-            
+           
+          </ul>
           <button class="navbar-toggler navbar-toggler-right d-lg-none align-self-center" type="button" data-toggle="offcanvas">
             <span class="mdi mdi-menu"></span>
           </button>
-         
         </div>
       </nav>
       <!-- partial -->
@@ -89,8 +83,9 @@
                   <!--change to offline or busy as needed-->
                 </div>
                 <div class="nav-profile-text d-flex flex-column">
-                  <span class="font-weight-bold mb-2">{{ name }}</span>
+                  <span class="font-weight-bold mb-2">Wojtek</span>
                 </div>
+                <i class="mdi mdi-bookmark-check text-success nav-profile-badge"></i>
               </a>
             </li>
             <li class="nav-item">
@@ -100,39 +95,75 @@
               </a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="{{ url_for('userpage') }}">
+              <a class="nav-link" href="#">
                 <span class="menu-title">Location</span>
                 <i class="mdi mdi-google-maps menu-icon"></i>
               </a>
             </li>
-           
-            <li class="nav-item sidebar-actions">
-              
+            <li class="nav-item">
+              <a class="nav-link" href="#">
+                <span class="menu-title">Support</span>
+                <i class="mdi mdi-comment-processing menu-icon"></i>
+              </a>
             </li>
+            
           </ul>
         </nav>
-        
         <!-- partial -->
         <div class="main-panel">
-          
           <div class="content-wrapper">
-            <div class="row" id="proBanner">
-              
-              <div class="col-12">
+            <div class="page-header">
+              <h3 class="page-title">
+                <span class="page-title-icon bg-gradient-primary text-white mr-2">
+                  <i class="mdi mdi-home"></i>
+                </span> Dashboard
+              </h3>
+            </div>
+            <div class="row">
+              <div class="col-md-4 stretch-card grid-margin">
+                <div class="card bg-gradient-danger card-img-holder text-white">
+                  <div class="card-body">
+                    <h4 class="font-weight-normal mb-3">Weekly Done Tasks <i class="mdi mdi-chart-line mdi-24px float-right"></i>
+                    </h4>
+                    <h2 class="mb-5"></h2>
+                    <h6 class="card-text"></h6>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-4 stretch-card grid-margin">
+                <div class="card bg-gradient-info card-img-holder text-white">
+                  <div class="card-body">
+                    <h4 class="font-weight-normal mb-3">Monthly Done Tasks <i class="mdi mdi-bookmark-outline mdi-24px float-right"></i>
+                    </h4>
+                    <h2 class="mb-5"></h2>
+                    <h6 class="card-text"></h6>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-4 stretch-card grid-margin">
+                <div class="card bg-gradient-success card-img-holder text-white">
+                  <div class="card-body">
+                    
+                    <h4 class="font-weight-normal mb-3">Yearly Done Tasks <i class="mdi mdi-diamond mdi-24px float-right"></i>
+                    </h4>
+                    <h2 class="mb-5"></h2>
+                    <h6 class="card-text"></h6>
+                  </div>
+                </div>
               </div>
             </div>
-            <div class="page-header">
+            <div class="row">
+             
               <div class="col-md-5 grid-margin stretch-card">
                 <div class="card">
                   <div class="card-body">
-                    <h4 class="card-title text-white">Todo</h4>
+                    <h4 class="card-title text-black">Todo</h4>
                     <div class="add-items d-flex">
                       <input type="text" class="form-control todo-list-input" placeholder="What do you need to do today?">
                       <button class="add btn btn-gradient-primary font-weight-bold todo-list-add-btn" id="add-task">Add</button>
                     </div>
                     <div class="list-wrapper">
                       <ul class="d-flex flex-column-reverse todo-list todo-list-custom">
-                        
                       </ul>
                     </div>
                   </div>
@@ -143,7 +174,7 @@
           <!-- content-wrapper ends -->
           <!-- partial:partials/_footer.html -->
           <footer class="footer">
-            <div class="container-fluid clearfix">
+            <div class="container-fluid clearfix"> EventApp 2021
             </div>
           </footer>
           <!-- partial -->

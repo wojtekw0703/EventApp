@@ -26,7 +26,7 @@ def start():
 
 @app.route('/userpage')
 def userpage():
-    return render_template("home.html")
+    return render_template("userpage.html")
 
 @app.route('/login', methods=['POST','GET'])
 def login():
@@ -39,7 +39,7 @@ def login():
         
         cur.execute("SELECT password FROM users WHERE password=%s", (password,))
         result_password = cur.fetchone()
-
+        
         if result_email and result_password != None:
             return redirect(url_for('userpage'))
         

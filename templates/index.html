@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="static/style.css" />
     <title>Sign in & Sign up Form</title>
     <style>
+
    .alert-danger {
     padding: 12px;
     border-radius: 7px;
@@ -26,14 +27,12 @@
       background-color: #26A65B;
       color: white;
 }
-   
-
   </style>
-
   </head>
   <body>
-    
+
     <div class="container">
+      <img src="static/img/logo.svg" style='position:absolute; top:0; right:0;'  width="250" height="100"/>
       <div class="forms-container">
         <div class="signin-signup">    
           <form action="{{ url_for('login') }}" class="sign-in-form" method = "POST">

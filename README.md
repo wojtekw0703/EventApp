@@ -1,4 +1,4 @@
-# EventApp
+# EventApp <br/>
 More info soon
 Contributors:
 - miljkovicjovan

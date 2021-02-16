@@ -1,9 +1,15 @@
 from flask import Flask, flash, render_template, request, redirect, url_for, session
-from db import mysql
-import pymysql
 from app import app
-conn = mysql.connect()
-cur = conn.cursor(pymysql.cursors.DictCursor)
+import mysql.connector
+
+conn = mysql.connector.connect(
+host="localhost",
+user="root",
+passwd="nowe_haslo",
+database="event_app_database"
+)
+
+cur = conn.cursor(buffered=True)
 
 class User:
     def __init__(self, name, email, password):
@@ -26,9 +32,11 @@ def login():
         email = request.form['email']
         password = request.form['pass']
         
+        conn.ping()
         cur.execute("SELECT email FROM users WHERE email=%s", (email,))
         result_email = cur.fetchone()
         
+        conn.ping()
         cur.execute("SELECT password FROM users WHERE password=%s", (password,))
         result_password = cur.fetchone()
         
@@ -53,10 +61,12 @@ def register():
         else:
             email = request.form['email']
             password = request.form['password']
-        
+            
+            conn.ping() 
             cur.execute("SELECT email FROM users WHERE email=%s", (email,))
             result_email = cur.fetchone()
-        
+            
+            conn.ping()     
             cur.execute("SELECT password FROM users WHERE password=%s", (password,))
             result_password = cur.fetchone()
 
@@ -65,6 +75,7 @@ def register():
                 return render_template('index.html')
             else:
                 sql = "INSERT INTO users (name, email, password) VALUES (%s,%s,%s)"
+                conn.ping()  # reconnecting mysql
                 args = (new_user.name,new_user.email,new_user.password)
                 cur.execute(sql,args)
                 conn.commit()

@@ -5,10 +5,10 @@ import bcrypt
 app = Flask(__name__)
 
 connection = mysql.connector.connect(
-host="localhost",
-user="root",
-passwd="nowe_haslo",
-database="event_app_database"
+host="eu-cdbr-west-03.cleardb.net",
+user="b7876263fb4ab0",
+passwd="ef019fb3",
+database="heroku_e8e06c5096341cd"
 )
 
 cur = connection.cursor(buffered=True)

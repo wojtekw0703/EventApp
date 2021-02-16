@@ -1,17 +1,9 @@
 from flask import Flask, flash, render_template, request, redirect, url_for, session
-import mysql.connector
-import bcrypt
+from db import mysql
+import pymysql
+conn = mysql.connect()
+cur = conn.cursor(pymysql.cursors.DictCursor)
 
-app = Flask(__name__)
-
-connection = mysql.connector.connect(
-host="eu-cdbr-west-03.cleardb.net",
-user="b7876263fb4ab0",
-passwd="ef019fb3",
-database="heroku_e8e06c5096341cd"
-)
-
-cur = connection.cursor(buffered=True)
 class User:
     def __init__(self, name, email, password):
         self.name = name
@@ -74,7 +66,7 @@ def register():
                 sql = "INSERT INTO users (name, email, password) VALUES (%s,%s,%s)"
                 args = (new_user.name,new_user.email,new_user.password)
                 cur.execute(sql,args)
-                connection.commit()
+                conn.commit()
                 flash(u"Your account has been created. Sign in now","success")
     return render_template('index.html')
     

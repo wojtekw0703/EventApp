@@ -89,6 +89,8 @@ def register():
 
                 flash(u"Your account has been created. Sign in now","success")
     return render_template('index.html')
+
+
     
 
 if __name__ == '__main__':

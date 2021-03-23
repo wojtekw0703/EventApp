@@ -1,6 +1,11 @@
 from flask import Flask, flash, render_template, request, redirect, url_for, session
-from app import app
 import mysql.connector
+
+
+app = Flask(__name__)
+
+app.secret_key = 'your secret key'
+
 
 conn = mysql.connector.connect(
 host="localhost",
@@ -17,15 +22,7 @@ class User:
         self.email = email
         self.password = password
 
-
 @app.route('/')
-def start():
-    return render_template("index.html")
-
-@app.route('/userpage')
-def userpage():
-    return render_template("userpage.html")
-
 @app.route('/login', methods=['POST','GET'])
 def login():
     if request.method == 'POST' and request.form['action'] == "Login":
@@ -33,19 +30,29 @@ def login():
         password = request.form['pass']
         
         conn.ping()
-        cur.execute("SELECT email FROM users WHERE email=%s", (email,))
-        result_email = cur.fetchone()
-        
+        cur.execute('SELECT * FROM users WHERE email = %s AND password = %s', (email, password,))
+        account = cur.fetchone()
         conn.ping()
-        cur.execute("SELECT password FROM users WHERE password=%s", (password,))
-        result_password = cur.fetchone()
         
-        if result_email and result_password != None:
-            return redirect(url_for('userpage'))
-            conn.commit()
-        
-        flash("Wrong email or password","danger")
+        if account:
+            # global session
+            session['loggedin'] = True
+            session['id'] = account[0]
+            session['email'] = account[1]
+            return render_template('profile.html', account=account)
+        else:
+             flash("Wrong email or password","danger")
     return render_template('index.html')
+
+
+@app.route('/logout')
+def logout():
+    # Remove session data, this will log the user out
+    session.pop('loggedin', None)
+    session.pop('id', None)
+    session.pop('username', None)
+    # Redirect to login page
+    return redirect(url_for('login'))
     
     
 

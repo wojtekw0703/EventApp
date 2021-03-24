@@ -31,10 +31,12 @@ def login():
         
         conn.ping()
         cur.execute('SELECT * FROM users WHERE email = %s AND password = %s', (email, password,))
+        global account
         account = cur.fetchone()
         conn.ping()
         
         if account:
+           
             session['loggedin'] = True
             session['id'] = account[0]
             session['email'] = account[1]

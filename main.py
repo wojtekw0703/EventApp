@@ -1,4 +1,4 @@
-from flask import Flask, flash, render_template, request, redirect, url_for, session
+from flask import Flask, flash, render_template, request, redirect, url_for, session, make_response
 import mysql.connector
 
 
@@ -22,8 +22,8 @@ class User:
         self.email = email
         self.password = password
 
-@app.route('/')
 @app.route('/login', methods=['POST','GET'])
+@app.route('/', methods=['POST','GET'])
 def login():
     if request.method == 'POST' and request.form['action'] == "Login":
         email = request.form['email']
@@ -35,11 +35,11 @@ def login():
         conn.ping()
         
         if account:
-            # global session
             session['loggedin'] = True
             session['id'] = account[0]
             session['email'] = account[1]
-            return render_template('profile.html', account=account)
+            # return render_template('profile.html', account=account)
+            return redirect(url_for('dashboard'))
         else:
              flash("Wrong email or password","danger")
     return render_template('index.html')
@@ -53,8 +53,11 @@ def logout():
     session.pop('username', None)
     # Redirect to login page
     return redirect(url_for('login'))
-    
-    
+
+
+@app.route('/dashboard', methods=['POST','GET'])
+def dashboard():
+    return render_template('profile.html', account=account)
 
 @app.route('/register', methods=['POST','GET'])
 def register():
@@ -90,7 +93,10 @@ def register():
                 flash(u"Your account has been created. Sign in now","success")
     return render_template('index.html')
 
-
+@app.errorhandler(404)
+def not_found():
+    """Page not found."""
+    return make_response(render_template("404.html"), 404)
     
 
 if __name__ == '__main__':

@@ -1,20 +1,27 @@
-from flask import Flask, flash, render_template, request, redirect, url_for, session, make_response
+from flask import (
+    Flask,
+    flash,
+    render_template,
+    request,
+    redirect,
+    url_for,
+    session,
+    make_response,
+)
 import mysql.connector
 
 
 app = Flask(__name__)
 
-app.secret_key = 'your secret key'
+app.secret_key = "your secret key"
 
 
 conn = mysql.connector.connect(
-host="localhost",
-user="root",
-passwd="nowe_haslo",
-database="event_app_database"
+    host="localhost", user="root", passwd="nowe_haslo", database="event_app_database"
 )
 
 cur = conn.cursor(buffered=True)
+
 
 class User:
     def __init__(self, name, email, password):
@@ -22,85 +29,95 @@ class User:
         self.email = email
         self.password = password
 
-@app.route('/login', methods=['POST','GET'])
-@app.route('/', methods=['POST','GET'])
+
+@app.route("/login", methods=["POST", "GET"])
+@app.route("/", methods=["POST", "GET"])
 def login():
-    if request.method == 'POST' and request.form['action'] == "Login":
-        email = request.form['email']
-        password = request.form['pass']
-        
+    if request.method == "POST" and request.form["action"] == "Login":
+        email = request.form["email"]
+        password = request.form["pass"]
+
         conn.ping()
-        cur.execute('SELECT * FROM users WHERE email = %s AND password = %s', (email, password,))
+        cur.execute(
+            "SELECT * FROM users WHERE email = %s AND password = %s",
+            (
+                email,
+                password,
+            ),
+        )
         global account
         account = cur.fetchone()
         conn.ping()
-        
+
         if account:
-           
-            session['loggedin'] = True
-            session['id'] = account[0]
-            session['email'] = account[1]
+            session["loggedin"] = True
+            session["id"] = account[0]
+            session["email"] = account[1]
             # return render_template('profile.html', account=account)
-            return redirect(url_for('dashboard'))
+            return redirect(url_for("dashboard"))
         else:
-             flash("Wrong email or password","danger")
-    return render_template('index.html')
+            flash("Wrong email or password", "danger")
+    return render_template("index.html")
 
 
-@app.route('/logout')
+@app.route("/logout")
 def logout():
     # Remove session data, this will log the user out
-    session.pop('loggedin', None)
-    session.pop('id', None)
-    session.pop('username', None)
+    session.pop("loggedin", None)
+    session.pop("id", None)
+    session.pop("username", None)
     # Redirect to login page
-    return redirect(url_for('login'))
+    return redirect(url_for("login"))
 
 
-@app.route('/dashboard', methods=['POST','GET'])
+@app.route("/dashboard", methods=["POST", "GET"])
 def dashboard():
-    return render_template('profile.html', account=account)
+    return render_template("profile.html", account=account)
 
-@app.route('/register', methods=['POST','GET'])
+
+@app.route("/register", methods=["POST", "GET"])
 def register():
-    if request.method == 'POST' and request.form['action'] == "Sign up":
-        name = request.form['name']
-        email = request.form['email']
-        password = request.form['password']
-        new_user = User(name,email,password)
+    if request.method == "POST" and request.form["action"] == "Sign up":
+        name = request.form["name"]
+        email = request.form["email"]
+        password = request.form["password"]
+        new_user = User(name, email, password)
         if name == "" or email == "" or password == "":
-            flash(u"Complete all fields","danger")
+            flash(u"Complete all fields", "danger")
         else:
-            email = request.form['email']
-            password = request.form['password']
-            
-            conn.ping() 
+            email = request.form["email"]
+            password = request.form["password"]
+
+            conn.ping()
             cur.execute("SELECT email FROM users WHERE email=%s", (email,))
             result_email = cur.fetchone()
-            
-            conn.ping()     
+
+            conn.ping()
             cur.execute("SELECT password FROM users WHERE password=%s", (password,))
             result_password = cur.fetchone()
 
-            if result_email and result_password != None:
-                flash(u"An account already exists","danger")
-                return render_template('index.html')
+            if result_email and result_password is not None:
+                flash(u"An account already exists", "danger")
+                # return render_template('index.html')
+                return
             else:
-                sql = "INSERT INTO users (name, email, password) VALUES (%s,%s,%s)"
+                sql = "INSERT INTO users (name, email, password)"
+                "VALUES (%s,%s,%s)"
                 conn.ping()  # reconnecting mysql
-                args = (new_user.name,new_user.email,new_user.password)
-                cur.execute(sql,args)
+                args = (new_user.name, new_user.email, new_user.password)
+                cur.execute(sql, args)
                 conn.commit()
 
-                flash(u"Your account has been created. Sign in now","success")
-    return render_template('index.html')
+                flash(u"Your account has been created. Sign in now", "success")
+    # return render_template('index.html')
+
 
 @app.errorhandler(404)
-def not_found():
+def not_found(e):
     """Page not found."""
     return make_response(render_template("404.html"), 404)
-    
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     app.secret_key = "^A%DEventApp"
     app.run(debug=True)

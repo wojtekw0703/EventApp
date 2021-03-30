@@ -6,6 +6,8 @@
     $('.todo-list-add-btn').on("click", function(event) {
       event.preventDefault();
 
+
+
       var item = $(this).prevAll('.todo-list-input').val();
 
       if (item) {
@@ -13,7 +15,14 @@
         todoListInput.val("");
       }
 
-    });
+    })
+    
+    $('.todo-list-input').keypress(function(e){
+      if(e.which == 13){
+          $('.todo-list-add-btn').click();
+      }
+  });
+    
 
     todoListItem.on('change', '.checkbox', function() {
       if ($(this).attr('checked')) {
